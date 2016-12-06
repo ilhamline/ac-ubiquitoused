@@ -17,7 +17,7 @@ $app->post('/set_active', function () use ($conn){
   $app = \Slim\Slim::getInstance();
   $json = json_decode($app->request->getBody());
   $id = $app->request->get('id');
-  $sql = "UPDATE ac SET active=1 where id='$id'";
+  $sql = "UPDATE ac SET active=1, update_active_at=now() where id='$id'";
   $result = $conn->query($sql);
   if ($result) {
     echo "A record updated successfully";
@@ -30,7 +30,7 @@ $app->post('/set_inactive', function () use ($conn){
   $app = \Slim\Slim::getInstance();
   $json = json_decode($app->request->getBody());
   $id = $app->request->get('id');
-  $sql = "UPDATE ac SET active=0 where id='$id'";
+  $sql = "UPDATE ac SET active=0, update_active_at=now() where id='$id'";
   $result = $conn->query($sql);
   if ($result) {
     echo "A record updated successfully";
