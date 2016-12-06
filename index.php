@@ -19,11 +19,13 @@ $app->post('/set_active', function () use ($conn){
   $id = $app->request->get('id');
   $sql = "UPDATE ac SET active=1, update_active_at=now() where id='$id'";
   $result = $conn->query($sql);
-  if ($result) {
-    echo "A record updated successfully";
+	if ($result) {
+    $output["message"] = "A record updated successfully";
   } else {
-    echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+    $output["message"] = "Error: " . $sql . "<br>" . mysqli_error($conn);
   }
+	$app->response()->headers->set('Content-Type', 'application/json');
+	echo json_encode($output);
 });
 
 $app->post('/set_inactive', function () use ($conn){
@@ -33,10 +35,12 @@ $app->post('/set_inactive', function () use ($conn){
   $sql = "UPDATE ac SET active=0, update_active_at=now() where id='$id'";
   $result = $conn->query($sql);
   if ($result) {
-    echo "A record updated successfully";
+    $output["message"] = "A record updated successfully";
   } else {
-    echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+    $output["message"] = "Error: " . $sql . "<br>" . mysqli_error($conn);
   }
+	$app->response()->headers->set('Content-Type', 'application/json');
+	echo json_encode($output);
 });
 
 $app->get('/get_status', function () use ($conn){
@@ -51,9 +55,8 @@ $app->get('/get_status', function () use ($conn){
 		$result = "404";
 	}
   if ($result == '404') {
-    $output["status"] = '404';
+    $output["message"] = '404 not found';
   }else {
-    $output["status"] = '200';
     $output["status"] = $result;
   }
 	$app->response()->headers->set('Content-Type', 'application/json');
@@ -79,10 +82,30 @@ $app->get('/get_temperature', function () use ($conn){
   $id = $app->request->get('id');
   $result = getTemp($conn, $id);
   if ($result == '404') {
-    $output["status"] = '404';
+    $output["message"] = 'gak ketemu gan!';
   }else {
-    $output["status"] = '200';
     $output["temperature"] = $result;
+  }
+	$app->response()->headers->set('Content-Type', 'application/json');
+	echo json_encode($output);
+});
+
+$app->get('/get_running_time', function () use ($conn){
+	$app = \Slim\Slim::getInstance();
+  $id = $app->request->get('id');
+  $sql = "SELECT update_active_at FROM ac WHERE id = '".$id."'";
+	$result = $conn->query($sql);
+	$row = mysqli_fetch_row($result);
+	if (count($row) > 0) {
+		$result = $row[0];
+	} else {
+		$result = "404";
+	}
+	// nah ini itung divide nyaa
+  if ($result == '404') {
+    $output["message"] = '404 not found';
+  }else {
+    $output["status"] = $result;
   }
 	$app->response()->headers->set('Content-Type', 'application/json');
 	echo json_encode($output);
