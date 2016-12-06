@@ -1,11 +1,8 @@
 <?php
 require 'Slim/Slim.php';
+require 'config.php';
 \Slim\Slim::registerAutoloader();
 $app = new \Slim\Slim();
-$servername = 'localhost';
-$username = 'root';
-$password = '';
-$dbname = 'ubi-slim';
 
 $conn = mysqli_connect($servername, $username, $password, $dbname);
 if (!$conn) {
