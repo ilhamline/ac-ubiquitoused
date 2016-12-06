@@ -14,21 +14,50 @@ $app->get('/', function () use ($conn){
 });
 
 $app->post('/set_active', function () use ($conn){
-  // $app = \Slim\Slim::getInstance();
-  // $json = json_decode($app->request->getBody());
-  // $action = $app->request->get('action');
-  // $id = $app->request->get('id');
-  // if ($action == 'on') {
-  //   $sql = "UPDATE ac SET active='$action' where id='$id'";
-  // }elseif ($action == 'off') {
-  //   # code...
-  // }
-  // $result = $conn->query($sql);
-  // if ($result) {
-  //   echo "A record updated successfully";
-  // } else {
-  //   echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-  // }
+  $app = \Slim\Slim::getInstance();
+  $json = json_decode($app->request->getBody());
+  $id = $app->request->get('id');
+  $sql = "UPDATE ac SET active=1 where id='$id'";
+  $result = $conn->query($sql);
+  if ($result) {
+    echo "A record updated successfully";
+  } else {
+    echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+  }
+});
+
+$app->post('/set_inactive', function () use ($conn){
+  $app = \Slim\Slim::getInstance();
+  $json = json_decode($app->request->getBody());
+  $id = $app->request->get('id');
+  $sql = "UPDATE ac SET active=0 where id='$id'";
+  $result = $conn->query($sql);
+  if ($result) {
+    echo "A record updated successfully";
+  } else {
+    echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+  }
+});
+
+$app->get('/get_status', function () use ($conn){
+	$app = \Slim\Slim::getInstance();
+  $id = $app->request->get('id');
+  $sql = "SELECT active FROM ac WHERE id = '".$id."'";
+	$result = $conn->query($sql);
+	$row = mysqli_fetch_row($result);
+	if (count($row) > 0) {
+		$result = $row[0];
+	} else {
+		$result = "404";
+	}
+  if ($result == '404') {
+    $output["status"] = '404';
+  }else {
+    $output["status"] = '200';
+    $output["status"] = $result;
+  }
+	$app->response()->headers->set('Content-Type', 'application/json');
+	echo json_encode($output);
 });
 
 $app->post('/set_temperature', function () use ($conn){
