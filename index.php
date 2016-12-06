@@ -59,6 +59,21 @@ $app->get('/get_temperature', function () use ($conn){
 	echo json_encode($output);
 });
 
+$app->post('/set_timer', function () use ($conn){
+  $app = \Slim\Slim::getInstance();
+  $json = json_decode($app->request->getBody());
+  $id = $app->request->get('id');
+  $type = $app->request->get('arg1');
+  $duration = $app->request->get('arg2');
+  $sql = "UPDATE ac SET timer='$type', set_timer_at='$duration' WHERE id='$id'";
+  $result = $conn->query($sql);
+  if ($result) {
+    echo "A record updated successfully";
+  } else {
+    echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+  }
+});
+
 function getTemp($conn, $id){
 	$app = \Slim\Slim::getInstance();
 	$sql = "SELECT temp FROM ac WHERE id = '".$id."'";
