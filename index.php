@@ -11,7 +11,9 @@ if (!$conn) {
 }
 
 $app->get('/', function () use ($conn){
-  echo "Hi!";
+	$app = \Slim\Slim::getInstance();
+	$app->render('test.html');
+  	echo "Hi!";
 });
 
 require 'Status.php';
