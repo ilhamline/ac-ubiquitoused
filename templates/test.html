@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<header>
+	<script type="text/javascript">
+		function updateTemp(theUrl){
+	    	httpGetAsync(theUrl, function(response) {
+	   			// do something with response
+			 });
+			console.log("success!");
+		}
+
+		function httpGetAsync(theUrl, callback)
+		{
+		    var xmlHttp = new XMLHttpRequest();
+		    xmlHttp.onreadystatechange = function() { 
+		        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+		            callback(xmlHttp.responseText);
+		    }
+		    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+		    xmlHttp.send(null);
+		}
+
+		setInterval(updateTemp, 3000, "http://localhost/ac-ubiquitoused/index?fungsi=set_temperature&id=1&arg1=1");
+	</script>
+</header>
+<body>
+
+<h1>My First Heading</h1>
+
+<p>My first paragraph.</p>
+
+</body>
+</html>
