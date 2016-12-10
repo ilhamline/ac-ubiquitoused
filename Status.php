@@ -20,6 +20,7 @@ $app->get('/get_status', function () use ($conn){
 	echo json_encode(getStatus($conn, $id), JSON_PRETTY_PRINT);
 });
 
+
 function setStatus($conn, $id, $status){
   $get_status = getStatus($conn, $id);
   $last_status = $get_status['status'] == 'true' ? $get_status['data']['status'] : null;

@@ -19,6 +19,7 @@ $app->get('/', function () use ($conn){
 require 'Status.php';
 require 'Temperature.php';
 require 'RunningTime.php';
+require 'AC.php';
 
 $app->get('/index', function () use ($conn){
 	$app = \Slim\Slim::getInstance();
@@ -43,7 +44,10 @@ $app->get('/index', function () use ($conn){
 			echo json_encode(setTimer($conn, $id, $action, $time), JSON_PRETTY_PRINT);
 			break;
 		case 'get_running_time':
-		  echo json_encode(getRunningTime($conn, $id), JSON_PRETTY_PRINT);
+		  	echo json_encode(getRunningTime($conn, $id), JSON_PRETTY_PRINT);
+			break;
+		case 'get_all_ac':
+		  	echo json_encode(getAllAC($conn), JSON_PRETTY_PRINT);
 			break;
 	}
 });

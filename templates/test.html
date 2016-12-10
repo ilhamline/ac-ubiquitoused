@@ -1,12 +1,68 @@
 <!DOCTYPE html>
 <html>
 <header>
-	<script type="text/javascript">
+	<style>
+		table {
+		    font-family: arial, sans-serif;
+		    border-collapse: collapse;
+		    width: 100%;
+		}
+
+		td, th {
+		    border: 1px solid #dddddd;
+		    text-align: left;
+		    padding: 8px;
+		}
+	</style>
+</header>
+<body>
+
+<h1 id="suhuRuangan"> Suhu Ruangan saat ini : </h1>
+<div id="container">
+	<table id="acTable">
+	  <tr>
+	    <th>ID</th>
+	    <th>Status</th>
+	    <th>Last Active</th>
+	    <th>Timer</th>
+	    <th>Set Timer At</th>
+	    <th>Temperature</th>
+	  </tr>
+	</table>
+</div>
+
+<script type="text/javascript">
 		function updateTemp(theUrl){
 	    	httpGetAsync(theUrl, function(response) {
-	   			// do something with response
-			 });
-			console.log("success!");
+	    		var jsonResponse = JSON.parse(response);
+				var table = document.getElementById("acTable");	
+
+				while(table.rows.length > 1) {
+				  table.deleteRow(-1);
+				}
+
+				var count = 1		
+
+	    		for(var i in jsonResponse.data)
+				{
+				    var row = table.insertRow(count);
+				    count++;
+
+					var cell0 = row.insertCell(0);
+					var cell1 = row.insertCell(1);
+					var cell2 = row.insertCell(2);
+					var cell3 = row.insertCell(3);
+					var cell4 = row.insertCell(4);
+					var cell5 = row.insertCell(5);
+
+					cell0.innerHTML = jsonResponse.data[i].id;
+					cell1.innerHTML = jsonResponse.data[i].status;
+					cell2.innerHTML = jsonResponse.data[i].last_update;
+					cell3.innerHTML = jsonResponse.data[i].timer != null ? jsonResponse.data[i].timer : "0";
+					cell4.innerHTML = jsonResponse.data[i].set_timer_at != null ? jsonResponse.data[i].set_timer_at : "-";
+					cell5.innerHTML = jsonResponse.data[i].temperature;
+				}
+	    	});
 		}
 
 		function httpGetAsync(theUrl, callback)
@@ -20,14 +76,9 @@
 		    xmlHttp.send(null);
 		}
 
-		setInterval(updateTemp, 3000, "http://localhost/ac-ubiquitoused/index?fungsi=set_temperature&id=1&arg1=1");
-	</script>
-</header>
-<body>
-
-<h1>My First Heading</h1>
-
-<p>My first paragraph.</p>
+		// setInterval(updateTemp, 3000, "http://10.0.2.2/ac-ubiquitoused/index?fungsi=get_all_ac");
+		setInterval(updateTemp, 3000, "http://localhost/ac-ubiquitoused/index?fungsi=get_all_ac");
+</script>
 
 </body>
 </html>
