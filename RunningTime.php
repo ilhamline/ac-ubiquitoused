@@ -56,9 +56,10 @@ function setTimer($conn, $id, $action, $time){
 
     if ($ac_status) {
       if ($action == 0) {
-        $sql = "UPDATE ac SET timer='$time', set_timer_at=now() WHERE id='$id'";
+        $sql = "UPDATE ac SET timer='$time', set_timer_at=now(), timer_action='$action' WHERE id='$id'";
+        activateCron($id);
       }else {
-        $sql = "UPDATE ac SET timer=null, set_timer_at=now() WHERE id='$id'";
+        $sql = "UPDATE ac SET timer=null, set_timer_at=now(), timer_action='$action' WHERE id='$id'";
       }
       $result = $conn->query($sql);
       if ($result) {
@@ -74,9 +75,10 @@ function setTimer($conn, $id, $action, $time){
       }
     } else {
       if ($action == 1) {
-        $sql = "UPDATE ac SET timer='$time', set_timer_at=now() WHERE id='$id'";
+        $sql = "UPDATE ac SET timer='$time', set_timer_at=now(), timer_action='$action' WHERE id='$id'";
+        activateCron($id);
       }else {
-        $sql = "UPDATE ac SET timer=null, set_timer_at=now() WHERE id='$id'";
+        $sql = "UPDATE ac SET timer=null, set_timer_at=now(), timer_action='$action' WHERE id='$id'";
       }
       $result = $conn->query($sql);
       if ($result) {
@@ -99,6 +101,80 @@ function setTimer($conn, $id, $action, $time){
   return $output;
 }
 
-function activateCron() {
+function getTimer($conn, $id){
+  $sql = "SELECT timer, set_timer_at, timer_action FROM ac WHERE id = '".$id."'";
+  $result = $conn->query($sql);
+  $row = mysqli_fetch_row($result);
+  $result = count($row) > 0 ? $row : "404";
+  if ($result == '404') {
+    $output['status'] = 'false';
+    $output['data']['id'] = $id;
+    $output['data']['message'] = 'gak ketemu gan!';
+  }else {
+    $output['status'] = 'true';
+    $output['data']['id'] = $id;
+    $output['data']['timer'] = $result[0];
+    $output['data']['set_timer_at'] = $result[1];
+    $output['data']['timer_action'] = $result[2];
+  }
+  return $output;
+}
 
+function minusTimer($conn, $id){
+  $sql = "SELECT timer, timer_action FROM ac WHERE id = '".$id."'";
+  $result = $conn->query($sql);
+  $row = mysqli_fetch_row($result);
+  $result = count($row) > 0 ? $row : "404";
+
+  if($result == "404"){
+    deactivateCron($id);
+  } else {
+    $newTimer = $result[0]-1;
+    setTimer($conn, $id, $result[1], $newTimer);
+
+    if($newTimer == 0){
+      setStatus($conn, $id, $result[1]);
+      deactivateCron($id);
+    }
+  }
+}
+
+function activateCron($id) {
+  $on  = "*/1 * * * * wget http://localhost/ac-ubiquitoused/index?fungsi=minus_timer?id='$id'\n";
+  shell_exec( 'export EDITOR="/home/user/cron.php on"; crontab -e' );
+  
+  $filename = isset( $argv[2] ) ? $argv[2] : '';   
+  
+  if ( !is_writable( $filename ) )
+      exit();
+
+  $crontab = file( $filename );
+  $key = array_search($off, $crontab );
+
+  if ( $key === false )
+      exit();
+
+  $crontab[$key] = $on;
+  sleep( 1 );
+  file_put_contents( $filename, implode( '', $crontab ) );
+
+}
+
+function deactivateCron($id) {
+  $off = "#*/1 * * * * wget http://localhost/ac-ubiquitoused/index?fungsi=minus_timer?id='$id'\n";
+
+  $filename = isset( $argv[2] ) ? $argv[2] : '';
+
+  if ( !is_writable( $filename ) )
+      exit();
+
+  $crontab = file( $filename );
+  $key = array_search($on, $crontab );
+
+  if ( $key === false )
+      exit();
+
+  $crontab[$key] = $off;
+  sleep( 1 );
+  file_put_contents( $filename, implode( '', $crontab ) );
 }

@@ -43,6 +43,12 @@ $app->get('/index', function () use ($conn){
 			$time = $app->request->get('arg2');
 			echo json_encode(setTimer($conn, $id, $action, $time), JSON_PRETTY_PRINT);
 			break;
+		case 'get_timer':
+		  	echo json_encode(getTimer($conn, $id), JSON_PRETTY_PRINT);
+			break;
+		case 'minus_timer':
+		  	echo json_encode(minusTimer($conn, $id), JSON_PRETTY_PRINT);
+			break;
 		case 'get_running_time':
 		  	echo json_encode(getRunningTime($conn, $id), JSON_PRETTY_PRINT);
 			break;
