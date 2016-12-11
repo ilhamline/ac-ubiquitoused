@@ -16,7 +16,7 @@ $app->get('/', function () use ($conn){
 
 require 'Status.php';
 require 'Temperature.php';
-require 'RunningTime.php';
+require 'Time.php';
 
 $app->get('/index', function () use ($conn){
 	$app = \Slim\Slim::getInstance();
