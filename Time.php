@@ -1,24 +1,10 @@
 <?php
-$app->get('/get_running_time', function () use ($conn){
-	$app = \Slim\Slim::getInstance();
-	$id = $app->request->get('id');
-  $app->response()->headers->set('Content-Type', 'application/json');
-  echo json_encode(getRunningTime($conn, $id), JSON_PRETTY_PRINT);
-});
-$app->post('/set_timer', function () use ($conn){
-  $app = \Slim\Slim::getInstance();
-  $id = $app->request->get('id');
-  $action = $app->request->get('arg1');
-  $time = $app->request->get('arg2');
-  $app->response()->headers->set('Content-Type', 'application/json');
-  echo json_encode(setTimer($conn, $id, $action, $time), JSON_PRETTY_PRINT);
-});
 
 function getRunningTime($conn, $id){
   $get_status = getStatus($conn, $id);
   $status = $get_status['status'] == 'true' ? $get_status['data']['status'] : null;
-  if ($status == 1) {
-    $sql = "SELECT update_active_at FROM ac WHERE id = '".$id."'";
+  if ($status == 'on' || $status == 'standby') {
+    $sql = "SELECT last_onoff_at FROM ac WHERE id = '".$id."'";
     $result = $conn->query($sql);
     $row = mysqli_fetch_row($result);
     $result = $row[0];
@@ -36,7 +22,7 @@ function getRunningTime($conn, $id){
     $output['data']['id'] = $id;
     $output['data']['running_time'] = time() - $start_date_epoch;
     $output['data']['message'] = $msg;
-  } elseif ($status != null) {
+  } elseif ($status == 'off') {
     $output['status'] = 'true';
     $output['data']['id'] = $id;
     $output['data']['running_time'] = 0;
@@ -52,16 +38,22 @@ function setTimer($conn, $id, $action, $time){
   $get_status = getStatus($conn, $id);
   $status = $get_status['status'] == 'true' ? $get_status['data']['status'] : null;
   if ($status) {
-    if ($action == 'on') {
-      $sql = "UPDATE ac SET timer='$time', set_timer_at=now() WHERE id='$id'";
+    if ($action == 'on' || $action == 'off' || $action == 'standby') {
+      $sql = "UPDATE ac SET timer='$time', timer_action='$action', set_timer_at=now() WHERE id='$id'";
     }else {
-      $sql = "UPDATE ac SET timer=null, set_timer_at=now() WHERE id='$id'";
+			$output['status'] = 'false';
+			$output['data']['id'] = $id;
+	    $output['data']['action'] = $action;
+	    $output['data']['message'] = 'Action yang dilakukan tidak valid';
+			return $output;
     }
     $result = $conn->query($sql);
     if ($result) {
       $output['status'] = 'true';
       $output['data']['id'] = $id;
-      $output['data']['action'] = $action;
+			$output['data']['action'] = $action;
+			$output['data']['timer'] = $time;
+      $output['data']['set_timer_at'] = strftime("%Y-%m-%d %H:%M:%S", time());
       $output['data']['message'] = "berhasil set temperatur action ".$action;
       if ($action == 'on') $output['data']['time'] = $time;
     } else {

@@ -1,17 +1,4 @@
 <?php
-$app->post('/set_temperature', function () use ($conn){
-  $app = \Slim\Slim::getInstance();
-  $id = $app->request->get('id');
-	$temp = $app->request->get('arg1');
-  $app->response()->headers->set('Content-Type', 'application/json');
-	echo json_encode(setTemp($conn, $id, $temp), JSON_PRETTY_PRINT);
-});
-$app->get('/get_temperature', function () use ($conn){
-	$app = \Slim\Slim::getInstance();
-  $id = $app->request->get('id');
-  $app->response()->headers->set('Content-Type', 'application/json');
-	echo json_encode(getTemp($conn, $id), JSON_PRETTY_PRINT);
-});
 
 function setTemp($conn, $id, $temp){
   $get_temp = getTemp($conn, $id);

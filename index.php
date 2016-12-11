@@ -24,19 +24,22 @@ $app->get('/index', function () use ($conn){
 	$id = $app->request->get('id');
 	$app->response()->headers->set('Content-Type', 'application/json');
 	switch ($func) {
-		case 'set_ac':
-			$status = $app->request->get('arg1') == 'on' ? 1 : 0 ;
+		case 'get_status':
+			echo json_encode(getStatus($conn, $id), JSON_PRETTY_PRINT);
+			break;
+		case 'set_status':
+			$status = $app->request->get('arg1');
 			echo json_encode(setStatus($conn, $id, $status), JSON_PRETTY_PRINT);
 			break;
 		case 'set_temperature':
 			$temp = $app->request->get('arg1');
 			echo json_encode(setTemp($conn, $id, $temp ), JSON_PRETTY_PRINT);
 			break;
-		case 'get_temp':
+		case 'get_temperature':
 			echo json_encode(getTemp($conn, $id), JSON_PRETTY_PRINT);
 			break;
 		case 'set_timer':
-			$action = $app->request->get('arg1') == 'on' ? 1 : 0 ;
+			$action = $app->request->get('arg1');
 			$time = $app->request->get('arg2');
 			echo json_encode(setTimer($conn, $id, $action, $time), JSON_PRETTY_PRINT);
 			break;
