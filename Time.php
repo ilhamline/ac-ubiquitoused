@@ -76,3 +76,15 @@ function setTimer($conn, $id, $action, $time){
   }
   return $output;
 }
+function setSystemTime($conn, $time){
+	$sql = "UPDATE system SET now='$time'";
+	$result = $conn->query($sql);
+	if ($result) {
+		$output['status'] = 'true';
+		$output['data']['message'] = "berhasil set system time ".$time;
+	} else {
+		$output['status'] = 'false';
+		$output['data']['message'] = "Error: " . $sql . mysqli_error($conn);;
+	}
+  return $output;
+}

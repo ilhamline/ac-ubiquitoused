@@ -43,6 +43,10 @@ $app->get('/index', function () use ($conn){
 		case 'get_running_time':
 		  echo json_encode(getRunningTime($conn, $id), JSON_PRETTY_PRINT);
 			break;
+		case 'set_system_time':
+			$time = $app->request->get('arg1');
+		  echo json_encode(setSystemTime($conn, $time), JSON_PRETTY_PRINT);
+			break;
 	}
 });
 
