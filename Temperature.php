@@ -1,21 +1,28 @@
 <?php
 
 function setTemp($conn, $id, $temp){
-  $get_temp = getTemp($conn, $id);
-  $last_temp = $get_temp['status'] == 'true' ? $get_temp['data']['temp'] : null;
-  $sql = "UPDATE ac SET temp='$temp' where id='$id'";
-  $result = $conn->query($sql);
-  if ($last_temp && $result) {
-    $output['status'] = 'true';
-    $output['data']['id'] = $id;
-    $output['data']['last_temp'] = $last_temp;
-		$output['data']['message'] = "berhasil set temperatur menjadi ".$temp;
+  if ($temp >= 16 && $temp <= 50) {
+    $get_temp = getTemp($conn, $id);
+    $last_temp = $get_temp['status'] == 'true' ? $get_temp['data']['temp'] : null;
+    $sql = "UPDATE ac SET temp='$temp' where id='$id'";
+    $result = $conn->query($sql);
+    if ($last_temp && $result) {
+      $output['status'] = 'true';
+      $output['data']['id'] = $id;
+      $output['data']['last_temp'] = $last_temp;
+      $output['data']['message'] = "berhasil set temperatur menjadi ".$temp;
+    } else {
+      $output['status'] = 'false';
+      $output['data']['id'] = $id;
+      $output['data']['message'] = "Error: " . $sql . mysqli_error($conn);
+    }
+    return $output;
   } else {
     $output['status'] = 'false';
     $output['data']['id'] = $id;
-		$output['data']['message'] = "Error: " . $sql . mysqli_error($conn);;
+    $output['data']['message'] = "Temperature ".$temp." derajat Celcius tidak vald";
+    return $output;
   }
-  return $output;
 }
 function getTemp($conn, $id){
 	$sql = "SELECT temp FROM ac WHERE id = '".$id."'";
