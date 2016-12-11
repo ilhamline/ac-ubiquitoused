@@ -17,7 +17,8 @@ function getAllAC($conn)
 	    	$output['data']['ac-'.$inResult[0].'']['last_update'] = $inResult[2];
 	    	$output['data']['ac-'.$inResult[0].'']['timer'] = $inResult[3];
 	    	$output['data']['ac-'.$inResult[0].'']['set_timer_at'] = $inResult[4];
-	    	$output['data']['ac-'.$inResult[0].'']['temperature'] = $inResult[5];
+	    	$output['data']['ac-'.$inResult[0].'']['timer_action'] = $inResult[5];
+	    	$output['data']['ac-'.$inResult[0].'']['temperature'] = $inResult[6];
 			$output['data']['ac-'.$inResult[0].'']['message'] = $inResult[1] == '1' ? 'nyala gan' : 'mati gan' ;
 		}
 	}

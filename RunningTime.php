@@ -50,24 +50,46 @@ function getRunningTime($conn, $id){
 }
 function setTimer($conn, $id, $action, $time){
   $get_status = getStatus($conn, $id);
-  $status = $get_status['status'] == 'true' ? $get_status['data']['status'] : null;
+  $status = $get_status['status'] == 'true' ? $get_status['status'] : null;
   if ($status) {
-    if ($action == 'on') {
-      $sql = "UPDATE ac SET timer='$time', set_timer_at=now() WHERE id='$id'";
-    }else {
-      $sql = "UPDATE ac SET timer=null, set_timer_at=now() WHERE id='$id'";
-    }
-    $result = $conn->query($sql);
-    if ($result) {
-      $output['status'] = 'true';
-      $output['data']['id'] = $id;
-      $output['data']['action'] = $action;
-      $output['data']['message'] = "berhasil set temperatur action ".$action;
-      if ($action == 'on') $output['data']['time'] = $time;
+    $ac_status = $get_status['data']['status'];
+
+    if ($ac_status) {
+      if ($action == 0) {
+        $sql = "UPDATE ac SET timer='$time', set_timer_at=now() WHERE id='$id'";
+      }else {
+        $sql = "UPDATE ac SET timer=null, set_timer_at=now() WHERE id='$id'";
+      }
+      $result = $conn->query($sql);
+      if ($result) {
+        $output['status'] = 'true';
+        $output['data']['id'] = $id;
+        $output['data']['action'] = $action;
+        $output['data']['message'] = "berhasil set timer action ".$action;
+        if ($action == 0) $output['data']['time'] = $time;
+      } else {
+        $output['status'] = 'false';
+        $output['data']['id'] = $id;
+        $output['data']['message'] = "Error: " . $sql . mysqli_error($conn);;
+      }
     } else {
-      $output['status'] = 'false';
-      $output['data']['id'] = $id;
-      $output['data']['message'] = "Error: " . $sql . mysqli_error($conn);;
+      if ($action == 1) {
+        $sql = "UPDATE ac SET timer='$time', set_timer_at=now() WHERE id='$id'";
+      }else {
+        $sql = "UPDATE ac SET timer=null, set_timer_at=now() WHERE id='$id'";
+      }
+      $result = $conn->query($sql);
+      if ($result) {
+        $output['status'] = 'true';
+        $output['data']['id'] = $id;
+        $output['data']['action'] = $action;
+        $output['data']['message'] = "berhasil set timer action ".$action;
+        if ($action == 1) $output['data']['time'] = $time;
+      } else {
+        $output['status'] = 'false';
+        $output['data']['id'] = $id;
+        $output['data']['message'] = "Error: " . $sql . mysqli_error($conn);;
+      }
     }
   }else {
     $output['status'] = 'false';
@@ -75,4 +97,8 @@ function setTimer($conn, $id, $action, $time){
     $output['data']['message'] = 'ac gak ketemu gan!';
   }
   return $output;
+}
+
+function activateCron() {
+
 }
