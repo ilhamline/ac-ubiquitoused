@@ -55,7 +55,6 @@ function setTimer($conn, $id, $action, $time){
 			$output['data']['timer'] = $time;
       $output['data']['set_timer_at'] = strftime("%Y-%m-%d %H:%M:%S", time());
       $output['data']['message'] = "berhasil set temperatur action ".$action;
-      if ($action == 'on') $output['data']['time'] = $time;
     } else {
       $output['status'] = 'false';
       $output['data']['id'] = $id;
@@ -74,6 +73,35 @@ function setSystemTime($conn, $time){
 	if ($result) {
 		$output['status'] = 'true';
 		$output['data']['message'] = "berhasil set system time ".$time;
+	} else {
+		$output['status'] = 'false';
+		$output['data']['message'] = "Error: " . $sql . mysqli_error($conn);;
+	}
+  return $output;
+}
+function resetTimer($conn, $id){
+	$sql = "UPDATE ac SET timer=null, timer_action=null, set_timer_at=null WHERE id='$id'";
+	$result = $conn->query($sql);
+	if ($result) {
+		$output['status'] = 'true';
+		$output['data']['message'] = "berhasil reset timer";
+	} else {
+		$output['status'] = 'false';
+		$output['data']['message'] = "Error: " . $sql . mysqli_error($conn);;
+	}
+  return $output;
+}
+function getTimer($conn, $id){
+	$sql = "SELECT timer_action, timer, set_timer_at FROM ac WHERE id = '".$id."'";
+	$result = mysqli_fetch_row($conn->query($sql));
+	$action = $result[0];
+	$timer = $result[1];
+	$set_timer_at = $result[2];
+	if ($result) {
+		$output['status'] = 'true';
+		$output['data']['action'] = $action;
+		$output['data']['timer'] = $timer;
+		$output['data']['set_timer_at'] = $set_timer_at;
 	} else {
 		$output['status'] = 'false';
 		$output['data']['message'] = "Error: " . $sql . mysqli_error($conn);;
