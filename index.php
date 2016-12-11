@@ -47,6 +47,10 @@ $app->get('/index', function () use ($conn){
 			$time = $app->request->get('arg1');
 		  echo json_encode(setSystemTime($conn, $time), JSON_PRETTY_PRINT);
 			break;
+		case 'set_system_temperature':
+			$temperature = $app->request->get('arg1');
+		  echo json_encode(setSystemTemperature($conn, $temperature), JSON_PRETTY_PRINT);
+			break;
 	}
 });
 

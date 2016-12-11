@@ -46,3 +46,15 @@ function getTemp($conn, $id){
 	}
 	return $output;
 }
+function setSystemTemperature($conn, $temperature){
+	$sql = "UPDATE system SET temperature='$temperature'";
+	$result = $conn->query($sql);
+	if ($result) {
+		$output['status'] = 'true';
+		$output['data']['message'] = "berhasil set temperature ".$temperature;
+	} else {
+		$output['status'] = 'false';
+		$output['data']['message'] = "Error: " . $sql . mysqli_error($conn);;
+	}
+  return $output;
+}
