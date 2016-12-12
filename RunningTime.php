@@ -127,54 +127,46 @@ function minusTimer($conn, $id){
   $result = count($row) > 0 ? $row : "404";
 
   if($result == "404"){
+    $output_timer['status'] = 'false';
+    $output_timer['data']['id'] = $id;
+    $output_timer['data']['message'] = 'gagal minusin timer gan!';
     deactivateCron($id);
   } else {
+    $output_timer['status'] = 'true';
+    $output_timer['data']['id'] = $id;
+    $output_timer['data']['message'] = 'berhasil minusin timer gan!';
+
     $newTimer = $result[0]-1;
-    setTimer($conn, $id, $result[1], $newTimer);
+    $sql = "UPDATE ac SET timer='$newTimer' WHERE id='$id'";
+    $resultInner = $conn->query($sql);
+
+    if($resultInner){
+      $output_timer['status'] = 'true';
+      $output_timer['data']['id'] = $id;
+      $output_timer['data']['new_timer'] = $newTimer;
+      $output_timer['data']['message'] = 'berhasil minusin timer gan!';
+
+    } else {
+        $output['status'] = 'false';
+        $output['data']['id'] = $id;
+        $output['data']['message'] = "Gagal minusin timer. Error: " . $sql . mysqli_error($conn);;
+    }
 
     if($newTimer == 0){
-      setStatus($conn, $id, $result[1]);
+      $output_status = setStatus($conn, $id, $result[1]);
       deactivateCron($id);
     }
   }
+
+  return $output_timer;
+
 }
 
 function activateCron($id) {
-  $on  = "*/1 * * * * wget http://localhost/ac-ubiquitoused/index?fungsi=minus_timer?id='$id'\n";
-  shell_exec( 'export EDITOR="/home/user/cron.php on"; crontab -e' );
-  
-  $filename = isset( $argv[2] ) ? $argv[2] : '';   
-  
-  if ( !is_writable( $filename ) )
-      exit();
-
-  $crontab = file( $filename );
-  $key = array_search($off, $crontab );
-
-  if ( $key === false )
-      exit();
-
-  $crontab[$key] = $on;
-  sleep( 1 );
-  file_put_contents( $filename, implode( '', $crontab ) );
-
+  shell_exec( '/opt/lampp/htdocs/ac-ubiquitoused/cron.php activate' );
+ 
 }
 
 function deactivateCron($id) {
-  $off = "#*/1 * * * * wget http://localhost/ac-ubiquitoused/index?fungsi=minus_timer?id='$id'\n";
-
-  $filename = isset( $argv[2] ) ? $argv[2] : '';
-
-  if ( !is_writable( $filename ) )
-      exit();
-
-  $crontab = file( $filename );
-  $key = array_search($on, $crontab );
-
-  if ( $key === false )
-      exit();
-
-  $crontab[$key] = $off;
-  sleep( 1 );
-  file_put_contents( $filename, implode( '', $crontab ) );
+  shell_exec( '/opt/lampp/htdocs/ac-ubiquitoused/cron.php deactivate' );
 }
