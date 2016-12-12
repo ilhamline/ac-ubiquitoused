@@ -21,7 +21,7 @@ require 'Time.php';
 $app->get('/index', function () use ($conn){
 	$app = \Slim\Slim::getInstance();
 	$func = $app->request->get('fungsi');
-	$id = $app->request->get('id');
+	$id = $app->request->get('id_device');
 	$app->response()->headers->set('Content-Type', 'application/json');
 	switch ($func) {
 		case 'get_status':
