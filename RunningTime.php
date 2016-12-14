@@ -163,10 +163,10 @@ function minusTimer($conn, $id){
 }
 
 function activateCron($id) {
-  shell_exec( '/opt/lampp/htdocs/ac-ubiquitoused/cron.php activate' );
+  var_dump(shell_exec( 'export EDITOR="/opt/lampp/htdocs/ac-ubiquitoused/cron.php on"; crontab -e 2>&1' ));
  
 }
 
 function deactivateCron($id) {
-  shell_exec( '/opt/lampp/htdocs/ac-ubiquitoused/cron.php deactivate' );
+  shell_exec( 'export EDITOR="/opt/lampp/htdocs/ac-ubiquitoused/cron.php off"; crontab -e' );
 }
