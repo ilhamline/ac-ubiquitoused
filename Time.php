@@ -52,7 +52,7 @@ function setTimer($conn, $id, $action, $time){
       $output['status'] = 'true';
       $output['data']['id'] = $id;
 			$output['data']['action'] = $action;
-			$output['data']['timer'] = $time;
+			$output['data']['duration'] = $time;
       $output['data']['set_timer_at'] = strftime("%Y-%m-%d %H:%M:%S", time());
       $output['data']['message'] = "berhasil set temperatur action ".$action;
     } else {
@@ -100,7 +100,7 @@ function getTimer($conn, $id){
 	if ($result) {
 		$output['status'] = 'true';
 		$output['data']['action'] = $action;
-		$output['data']['timer'] = $timer;
+		$output['data']['duration'] = $timer;
 		$output['data']['set_timer_at'] = $set_timer_at;
 	} else {
 		$output['status'] = 'false';
