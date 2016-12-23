@@ -21,7 +21,7 @@ require 'Time.php';
 $app->get('/index', function () use ($conn){
 	$app = \Slim\Slim::getInstance();
 	$func = $app->request->get('fungsi');
-	$id = $app->request->get('id_device');
+	$id = intval($app->request->get('id_device'));
 	$app->response()->headers->set('Content-Type', 'application/json');
 	switch ($func) {
 		case 'get_status':
@@ -50,7 +50,7 @@ $app->get('/index', function () use ($conn){
 			echo json_encode(setStatus($conn, $id, $status), JSON_PRETTY_PRINT);
 			break;
 		case 'set_temperature':
-			$temp = $app->request->get('arg1');
+			$temp = intval($app->request->get('arg1'));
 			if ($id == 0) {
 				$sql = "SELECT id FROM ac";
 				$result = $conn->query($sql);
@@ -76,7 +76,7 @@ $app->get('/index', function () use ($conn){
 			break;
 		case 'set_timer':
 			$action = $app->request->get('arg1');
-			$time = $app->request->get('arg2');
+			$time = intval($app->request->get('arg2'));
 			if ($id == 0) {
 				$sql = "SELECT id FROM ac";
 				$result = $conn->query($sql);
@@ -129,7 +129,7 @@ $app->get('/index', function () use ($conn){
 		  echo json_encode(setSystemTime($conn, $time), JSON_PRETTY_PRINT);
 			break;
 		case 'set_system_temperature':
-			$temperature = $app->request->get('arg1');
+			$temperature = intval($app->request->get('arg1'));
 		  echo json_encode(setSystemTemperature($conn, $temperature), JSON_PRETTY_PRINT);
 			break;
 	}
