@@ -7,6 +7,7 @@ function setTemp($conn, $id, $temp){
     $sql = "UPDATE ac SET temp='$temp' where id='$id'";
     $result = $conn->query($sql);
     if ($last_temp && $result) {
+      $last_temp = intval($last_temp);
       $output['status'] = 'true';
       $output['data']['id'] = $id;
       $output['data']['last_temp'] = $last_temp;
@@ -34,6 +35,7 @@ function getTemp($conn, $id){
     $output['data']['id'] = $id;
 		$output['data']['message'] = 'gak ketemu gan!';
 	}else {
+    $result = intval($result);
     $output['status'] = 'true';
     $output['data']['id'] = $id;
     $output['data']['temp'] = $result;
