@@ -1,8 +1,8 @@
 #!/usr/bin/php
 <?php
 
-$on  = "*/1 * * * * curl -i -H \"Accept: application/json\" -H \"Content-Type: application/json\" -X GET \"http://localhost/ac-ubiquitoused/index?fungsi=minus_time&id=1\"\n";
-$off = "#*/1 * * * * curl -i -H \"Accept: application/json\" -H \"Content-Type: application/json\" -X GET \"http://localhost/ac-ubiquitoused/index?fungsi=minus_time&id=1\"\n";
+$on  = "* * * * * curl 'http://localhost/ac-ubiquitoused/index?fungsi=minus_timer&id=1'";
+$off = "#* * * * * curl 'http://localhost/ac-ubiquitoused/index?fungsi=minus_timer&id=1'";
 
 $param    = isset( $argv[1] ) ? $argv[1] : '';
 $filename = isset( $argv[2] ) ? $argv[2] : '';
