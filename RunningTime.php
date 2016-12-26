@@ -127,46 +127,26 @@ function minusTimer($conn, $id){
   $result = count($row) > 0 ? $row : "404";
 
   if($result == "404"){
-    $output_timer['status'] = 'false';
-    $output_timer['data']['id'] = $id;
-    $output_timer['data']['message'] = 'gagal minusin timer gan!';
     deactivateCron($id);
   } else {
-    $output_timer['status'] = 'true';
-    $output_timer['data']['id'] = $id;
-    $output_timer['data']['message'] = 'berhasil minusin timer gan!';
-
     $newTimer = $result[0]-1;
     $sql = "UPDATE ac SET timer='$newTimer' WHERE id='$id'";
     $resultInner = $conn->query($sql);
-
-    if($resultInner){
-      $output_timer['status'] = 'true';
-      $output_timer['data']['id'] = $id;
-      $output_timer['data']['new_timer'] = $newTimer;
-      $output_timer['data']['message'] = 'berhasil minusin timer gan!';
-
-    } else {
-        $output['status'] = 'false';
-        $output['data']['id'] = $id;
-        $output['data']['message'] = "Gagal minusin timer. Error: " . $sql . mysqli_error($conn);;
-    }
 
     if($newTimer == 0){
       $output_status = setStatus($conn, $id, $result[1]);
       deactivateCron($id);
     }
   }
-
-  return $output_timer;
-
 }
 
 function activateCron($id) {
   exec( '(crontab -l ; echo "* * * * * curl \'http://localhost/ac-ubiquitoused/index?fungsi=minus_timer&id='.$id.'\'") | crontab -' );
+  error_log( "activate ac ".$id."" );
  
 }
 
 function deactivateCron($id) {
-  exec( 'crontab -l | grep -v \'curl \'http://localhost/ac-ubiquitoused/index?fungsi=minus_timer&id='.$id.'\'\'  | crontab -' );
+  exec( 'crontab -l | grep -v "curl \'http://localhost/ac-ubiquitoused/index?fungsi=minus_timer&id='.$id.'\'"  | crontab -' );
+  error_log( "Deactivate ac ".$id."" );
 }
