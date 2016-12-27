@@ -11,14 +11,16 @@ if (!$conn) {
 }
 
 $app->get('/', function () use ($conn){
-  echo "Hi!";
+	$app = \Slim\Slim::getInstance();
+	$app->render('home.html');
 });
 
 require 'Status.php';
 require 'Temperature.php';
 require 'Time.php';
+require 'Cron.php';
 
-$app->get('/index', function () use ($conn){
+$app->get('/index', function () use ($conn, $baseServer){
 	$app = \Slim\Slim::getInstance();
 	$func = $app->request->get('fungsi');
 	$id = intval($app->request->get('id_device'));
@@ -82,11 +84,11 @@ $app->get('/index', function () use ($conn){
 				$result = $conn->query($sql);
 				$num_rows = $result->num_rows;
 				for ($i=1; $i <= $num_rows; $i++) {
-					echo json_encode(setTimer($conn, $i, $action, $time), JSON_PRETTY_PRINT);
+					echo json_encode(setTimer($conn, $i, $action, $time, $baseServer), JSON_PRETTY_PRINT);
 				}
 				return;
 			}
-			echo json_encode(setTimer($conn, $id, $action, $time), JSON_PRETTY_PRINT);
+			echo json_encode(setTimer($conn, $id, $action, $time, $baseServer), JSON_PRETTY_PRINT);
 			break;
 		case 'reset_timer':
 			if ($id == 0) {
@@ -111,6 +113,9 @@ $app->get('/index', function () use ($conn){
 				return;
 			}
 			echo json_encode(getTimer($conn, $id), JSON_PRETTY_PRINT);
+			break;
+		case 'minus_timer':
+		  	echo json_encode(minusTimer($conn, $id, $baseServer), JSON_PRETTY_PRINT);
 			break;
 		case 'get_running_time':
 			if ($id == 0) {

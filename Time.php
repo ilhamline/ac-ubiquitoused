@@ -34,7 +34,7 @@ function getRunningTime($conn, $id){
   }
   return $output;
 }
-function setTimer($conn, $id, $action, $time){
+function setTimer($conn, $id, $action, $time, $baseServer){
   $get_status = getStatus($conn, $id);
   $status = $get_status['status'] == 'true' ? $get_status['data']['status'] : null;
   if ($status) {
@@ -48,6 +48,8 @@ function setTimer($conn, $id, $action, $time){
 			return $output;
     }
     $result = $conn->query($sql);
+    timerOn($id, $baseServer);
+    
     if ($result) {
       $output['status'] = 'true';
       $output['data']['id'] = $id;
@@ -107,4 +109,28 @@ function getTimer($conn, $id){
 		$output['data']['message'] = "Error: " . $sql . mysqli_error($conn);;
 	}
   return $output;
+}
+
+function minusTimer($conn, $id, $baseServer){
+  $sql = "SELECT timer, timer_action FROM ac WHERE id = '".$id."'";
+  $result = $conn->query($sql);
+  $row = mysqli_fetch_row($result);
+  $result = count($row) > 0 ? $row : "404";
+  
+  if($result == "404"){
+    timerOff($id, $baseServer);
+  } else {
+    $newTimer = $result[0]-1;
+    
+
+    if($newTimer <= 0){
+      $sql = "UPDATE ac SET timer='$newTimer', timer_action=' ' WHERE id='$id'";
+      $output_status = setStatus($conn, $id, $result[1]);
+      timerOff($id, $baseServer);
+    } else {
+      $sql = "UPDATE ac SET timer='$newTimer' WHERE id='$id'";
+    }
+
+    $resultInner = $conn->query($sql);
+  }
 }
