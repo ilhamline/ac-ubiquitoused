@@ -54,3 +54,48 @@ function setSystemTemperature($conn, $temperature){
 	}
   return $output;
 }
+
+function updateSystemTemperature($conn){
+  //itung suhu rata-rata
+  $sql = "SELECT temp FROM ac WHERE status='on'";
+  $result = $conn->query($sql);
+
+  $sumTemp = 0;
+  $countTemp = 0;
+
+  while($row = mysqli_fetch_row($result)) {
+    $inResult = count($row) > 0 ? $row : "404";
+    
+    if ($inResult == '404') {
+      exit();
+    }else {
+      $sumTemp = $sumTemp + $inResult[0];
+      $countTemp = $countTemp + 1;
+    }
+  }
+
+  $avgTemp = $sumTemp / $countTemp;
+
+  //ambil system temperature
+  $sql = "SELECT temperature FROM system";
+  $result = $conn->query($sql);
+  $row = mysqli_fetch_row($result);
+  $result = count($row) > 0 ? $row[0] : "404";
+  $systemTemp = 0;
+
+  if($result == '404') {
+    exit();
+  } else {
+    $systemTemp = $result;
+  }
+
+  //compare suhu ac dan suhu ruangan
+  if ($avgTemp > $systemTemp){
+    setSystemTemperature($conn, $systemTemp + 1);
+    setSystemTime($conn, date("Y-m-d H:i:s"));
+  } elseif ($avgTemp < $systemTemp) {
+    setSystemTemperature($conn, $systemTemp - 1);
+    setSystemTime($conn, date("Y-m-d H:i:s"));
+  }
+
+}

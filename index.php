@@ -20,7 +20,9 @@ require 'Temperature.php';
 require 'Time.php';
 require 'Cron.php';
 
-$app->get('/index', function () use ($conn, $baseServer){
+$app->get('/index', function () use ($conn, $baseServer, $checkTempActive){
+	checkTemp($baseServer);
+
 	$app = \Slim\Slim::getInstance();
 	$func = $app->request->get('fungsi');
 	$id = intval($app->request->get('id_device'));
@@ -136,6 +138,9 @@ $app->get('/index', function () use ($conn, $baseServer){
 		case 'set_system_temperature':
 			$temperature = intval($app->request->get('arg1'));
 		  echo json_encode(setSystemTemperature($conn, $temperature), JSON_PRETTY_PRINT);
+			break;
+		case 'update_system_temperature':
+			echo json_encode(updateSystemTemperature($conn), JSON_PRETTY_PRINT);
 			break;
 	}
 });
