@@ -112,25 +112,55 @@ function getTimer($conn, $id){
 }
 
 function minusTimer($conn, $id, $baseServer){
-  $sql = "SELECT timer, timer_action FROM ac WHERE id = '".$id."'";
-  $result = $conn->query($sql);
-  $row = mysqli_fetch_row($result);
-  $result = count($row) > 0 ? $row : "404";
+  $get_timer = getTimer($conn, $id);
+  $status = $get_timer['status'] == true ? true : false;
   
-  if($result == "404"){
-    timerOff($id, $baseServer);
-  } else {
-    $newTimer = $result[0]-1;
-    
+  if ($status) {
+    $newTimer = intval($get_timer['data']['duration'])-1;
 
     if($newTimer <= 0){
       $sql = "UPDATE ac SET timer='$newTimer', timer_action=' ' WHERE id='$id'";
-      $output_status = setStatus($conn, $id, $result[1]);
+      $set_status = setStatus($conn, $id, $get_timer['data']['action']);
       timerOff($id, $baseServer);
     } else {
       $sql = "UPDATE ac SET timer='$newTimer' WHERE id='$id'";
+      $set_status = null;
     }
 
     $resultInner = $conn->query($sql);
-  }
+    
+    if ($resultInner) {
+      $output['status'] = 'true';
+      $output['data']['id'] = $id;
+
+      if($set_status != null){
+        if ($set_status['status'] == 'false') {
+          $output['status'] = 'false';
+          $output['data']['message'] = "Error set status: " . $set_status['data']['message'];
+          return $output;
+        }
+
+        $output['data']['timer_action'] = $get_timer['data']['action'];
+        $output['data']['message'] = "Berhasil minus timer dan ubah status AC";
+      } else {
+        $output['data']['message'] = "Berhasil minus timer AC";
+      }
+
+      $output['data']['old_time'] = intval($get_timer['data']['duration']);
+      $output['data']['new_time'] = $newTimer;
+      return $output;
+    }
+
+    $output['status'] = 'false';
+    $output['data']['id'] = $id;
+    $output['data']['message'] = "Error set timer: " . $sql . mysqli_error($conn);;
+    timerOff($id, $baseServer);
+    return $output;
+  } 
+
+  $output['status'] = 'false';
+  $output['data']['id'] = $id;
+  $output['data']['message'] = "Error get timer: " . $get_Timer['data']['message'];
+  timerOff($id, $baseServer);
+  return $output;
 }
