@@ -20,6 +20,8 @@ require 'Temperature.php';
 require 'Time.php';
 require 'Cron.php';
 
+updateSystemTime($conn);
+
 $app->get('/index', function () use ($conn, $baseServer, $checkTempActive){
 	checkTemp($baseServer);
 

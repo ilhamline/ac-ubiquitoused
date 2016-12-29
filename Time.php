@@ -164,3 +164,7 @@ function minusTimer($conn, $id, $baseServer){
   timerOff($id, $baseServer);
   return $output;
 }
+
+function updateSystemTime($conn){
+  setSystemTime($conn, date("Y-m-d H:i:s"));
+}
