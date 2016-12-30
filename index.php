@@ -147,4 +147,17 @@ $app->get('/index', function () use ($conn, $baseServer, $checkTempActive){
 	}
 });
 
+$app->get('/startupnp/', function () {
+	$cmd = '/home/net/.nvm/versions/node/v4.5.0/bin/node node_modules/node-ssdp/ubi/server.js';
+	$outputfile = 'output.txt';
+	$pidfile = 'pid.txt';
+	exec(sprintf("%s > %s 2>&1 & echo $! >> %s", $cmd, $outputfile, $pidfile));
+});
+
+$app->get('/upnp/', function () {
+	$cmd = '/home/net/.nvm/versions/node/v4.5.0/bin/node node_modules/node-ssdp/ubi/client.js';
+	exec($cmd, $output);
+	echo json_encode($output, JSON_PRETTY_PRINT);
+});
+
 $app->run();
