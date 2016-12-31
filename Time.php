@@ -81,14 +81,22 @@ function setSystemTime($conn, $time){
 	}
   return $output;
 }
-function resetTimer($conn, $id){
-	$sql = "UPDATE ac SET timer=null, timer_action=null, set_timer_at=null WHERE id='$id'";
+function resetTimer($conn, $id, $baseServer){
+  timerOff($id, $baseServer);
+	$sql = "UPDATE ac SET timer=null, timer_action=' ', set_timer_at=null WHERE id='$id'";
 	$result = $conn->query($sql);
-	if ($result) {
+
+  if ($conn->affected_rows == 0) {
+    $output['status'] = 'false';
+    $output['data']['id'] = $id;
+    $output['data']['message'] = "timer ac sudah di reset atau ac ga ketemu";
+  } else if ($result) {
 		$output['status'] = 'true';
+    $output['data']['id'] = $id;
 		$output['data']['message'] = "berhasil reset timer";
 	} else {
 		$output['status'] = 'false';
+    $output['data']['id'] = $id;
 		$output['data']['message'] = "Error: " . $sql . mysqli_error($conn);;
 	}
   return $output;

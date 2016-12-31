@@ -122,11 +122,11 @@ $app->get('/index', function () use ($conn, $baseServer){
 				$result = $conn->query($sql);
 				$num_rows = $result->num_rows;
 				for ($i=1; $i <= $num_rows; $i++) {
-					echo json_encode(resetTimer($conn, $i), JSON_PRETTY_PRINT);
+					echo json_encode(resetTimer($conn, $i, $baseServer), JSON_PRETTY_PRINT);
 				}
 				return;
 			}
-			echo json_encode(resetTimer($conn, $id), JSON_PRETTY_PRINT);
+			echo json_encode(resetTimer($conn, $id, $baseServer), JSON_PRETTY_PRINT);
 			break;
 		case 'get_timer':
 			if ($id == 0) {
