@@ -1,7 +1,7 @@
 <?php
 
 function setTemp($conn, $id, $temp){
-  if ($temp >= 16 && $temp <= 50) {
+  if ($temp >= 16 && $temp <= 30) {
     $get_temp = getTemp($conn, $id);
     $last_temp = $get_temp['status'] == 'true' ? $get_temp['data']['temp'] : null;
     $sql = "UPDATE ac SET temp='$temp' where id='$id'";
