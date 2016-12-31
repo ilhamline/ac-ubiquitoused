@@ -73,7 +73,7 @@ function getSystemTemperature($conn){
 
 function updateSystemTemperature($conn){
   //itung suhu rata-rata
-  $sql = "SELECT temp FROM ac WHERE status='on'";
+  $sql = "SELECT temp FROM ac WHERE status='on' OR status='standby'";
   $result = $conn->query($sql);
 
   $sumTemp = 0;

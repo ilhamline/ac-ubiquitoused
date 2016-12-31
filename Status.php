@@ -13,8 +13,23 @@ function setStatus($conn, $id, $status){
 
 	if ($status == 'on' || $status == 'off') {
 		$sql = "UPDATE ac SET status='$status', last_onoff_at=now() where id='$id'";
-	} else {
+	} elseif ($status == 'standby') {
 		$sql = "UPDATE ac SET status='$status' where id='$id'";
+
+		$set_temp = setTemp($conn, $id, 25);
+
+		if ($set_temp['status'] == 'false') {
+			$output['status'] = 'false';
+			$output['data']['id'] = $id;
+			$output['data']['message'] = "Error set temp standby : " . $set_temp['data']['message'];
+			return $output;
+		}
+
+	} else {
+		$output['status'] = 'false';
+		$output['data']['id'] = $id;
+		$output['data']['message'] = "Action tidak valid";
+		return $output;
 	}
 
 	$result = $conn->query($sql);
