@@ -14,6 +14,7 @@ require 'Status.php';
 require 'Temperature.php';
 require 'Time.php';
 require 'Cron.php';
+require 'Services.php';
 
 updateSystemTime($conn);
 
@@ -25,6 +26,9 @@ autoOn7am($baseServer);
 
 //cron auto off jam 9 malam
 autoOff9pm($baseServer);
+
+//cron auto ping ke kursi
+autoPingChair($baseServer);
 
 $app->get('/', function () use ($conn, $baseServer){
 	$app = \Slim\Slim::getInstance();
@@ -177,6 +181,9 @@ $app->get('/index', function () use ($conn, $baseServer){
 			break;
 		case 'update_system_temperature':
 			echo json_encode(updateSystemTemperature($conn), JSON_PRETTY_PRINT);
+			break;
+		case 'ping_chair':
+			echo json_encode(pingChair($baseServer), JSON_PRETTY_PRINT);
 			break;
 	}
 });
