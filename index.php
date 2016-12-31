@@ -201,4 +201,63 @@ $app->get('/upnp/', function () {
 	echo json_encode($output, JSON_PRETTY_PRINT);
 });
 
+$app->get('/service/', function () use ($conn, $projectfolder) {
+	$result = mysqli_query($conn,"SELECT * FROM services");
+	echo "<table border='1'>";
+
+	$i = 0;
+	while($row = $result->fetch_assoc())
+	{
+    if ($i == 0) {
+      echo "<tr>";
+      foreach ($row as $key => $value) {
+        echo "<th>" . $key . "</th>";
+      }
+      echo "</tr>";
+    }
+    $i++;
+    echo "<tr>";
+    foreach ($row as $value) {
+      echo "<td>" . $value . "</td>";
+    }
+    echo "<td>";
+    echo '<a href="/'.$projectfolder.'/service/'.$i.'"><button>edit</button></a>';
+    echo "</td>";
+    echo "</tr>";
+	}
+	echo "</table>";
+  echo '<br><a href="/'.$projectfolder.'"><button>home</button></a>';
+	mysqli_close($conn);
+})->name('service');
+
+$app->get('/service/:id/', function ($id) use ($conn) {
+	$result = mysqli_query($conn,"SELECT * FROM services WHERE id=$id");
+	while($row = $result->fetch_assoc())
+	{
+  	echo '
+			<form action="" method="POST">
+	    Nama: <input type="text" name="name" value="'.$row['name'].'">';
+	  echo '
+	    Baseserver: <input type="text" name="baseserver" value="'.$row['baseserver'].'" >
+	    <input type="submit" name="submit" value="SUBMIT" >
+			</form>';
+	}
+	mysqli_close($conn);
+});
+
+$app->post('/service/:id', function ($id) use ($conn) {
+	$app = \Slim\Slim::getInstance();
+	$name = $app->request->post('name');
+	$base = $app->request->post('baseserver');
+	$sql = "UPDATE services SET name='$name', baseserver='$base' WHERE id=$id";
+	if ($conn->query($sql) === TRUE) {
+    echo "Record updated successfully";
+	} else {
+  	echo "Error updating record: " . $conn->error;
+	}
+	$conn->close();
+	$link = $app->urlFor('service');
+	echo '<br><a href="'.$link.'"><button>back to list of services</button></a>';
+});
+
 $app->run();
