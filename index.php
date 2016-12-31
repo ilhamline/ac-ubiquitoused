@@ -204,6 +204,9 @@ $app->get('/startupnp/', function () {
 	$outputfile = 'output.txt';
 	$pidfile = 'pid.txt';
 	exec(sprintf("%s > %s 2>&1 & echo $! >> %s", $cmd, $outputfile, $pidfile));
+  $output['status'] = 'true';
+  $output['data']['message'] = 'berhasil startupnp';
+	echo json_encode($output, JSON_PRETTY_PRINT);
 });
 
 $app->get('/upnp/', function () {
