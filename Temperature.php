@@ -55,6 +55,22 @@ function setSystemTemperature($conn, $temperature){
   return $output;
 }
 
+function getSystemTemperature($conn){
+  $sql = "SELECT temperature FROM system";
+  $result = $conn->query($sql);
+  $row = mysqli_fetch_row($result);
+  $result = count($row) > 0 ? $row[0] : "404";
+  if ($result == '404') {
+    $output['status'] = 'false';
+    $output['data']['message'] = 'system rusak gan!';
+  }else {
+    $result = intval($result);
+    $output['status'] = 'true';
+    $output['data']['system_temp'] = $result;
+  }
+  return $output;
+}
+
 function updateSystemTemperature($conn){
   //itung suhu rata-rata
   $sql = "SELECT temp FROM ac WHERE status='on'";

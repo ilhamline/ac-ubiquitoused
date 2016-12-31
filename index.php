@@ -141,6 +141,9 @@ $app->get('/index', function () use ($conn, $baseServer, $checkTempActive){
 			$temperature = intval($app->request->get('arg1'));
 		  echo json_encode(setSystemTemperature($conn, $temperature), JSON_PRETTY_PRINT);
 			break;
+		case 'get_system_temperature':
+		  echo json_encode(getSystemTemperature($conn), JSON_PRETTY_PRINT);
+			break;
 		case 'update_system_temperature':
 			echo json_encode(updateSystemTemperature($conn), JSON_PRETTY_PRINT);
 			break;
