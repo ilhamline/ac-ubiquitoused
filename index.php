@@ -22,9 +22,16 @@ require 'Cron.php';
 
 updateSystemTime($conn);
 
-$app->get('/index', function () use ($conn, $baseServer, $checkTempActive){
-	checkTemp($baseServer);
+//cron update sytem temperature
+checkTemp($baseServer);
 
+//cron auto on jam 7 pagi
+autoOn7am($baseServer);
+
+//cron auto off jam 9 malam
+autoOff9pm($baseServer);
+
+$app->get('/index', function () use ($conn, $baseServer, $checkTempActive){
 	$app = \Slim\Slim::getInstance();
 	$func = $app->request->get('fungsi');
 	$id = intval($app->request->get('id_device'));
