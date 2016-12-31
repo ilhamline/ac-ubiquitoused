@@ -40,25 +40,22 @@
                   <?php endforeach; ?>
                 </div>
               </div>
+              <div class="large-3 columns saklar">
+                  Chair Status
+                  <select>
+                    <?php if ($chair) ?>
+                      <option value="Occupied" disabled>Occupied</option>
+                    <?php else ?>
+                      <option value="Empty" disabled>Empty</option>
+                    <?php endif ?>
+                  </select>
+                </div>
             </div>
           </div>
 
           <div class="row">
               <div class="footer">
-                <div class="large-4 columns saklar">
-                  Door
-                  <select>
-                    <option value="Open">Open</option>
-                    <option value="Close">Close</option>
-                  </select>
-                </div>
-                <div class="large-4 columns saklar">
-                  Desk
-                  <select>
-                    <option value="Occupied">Occupied</option>
-                    <option value="Empty">Empty</option>
-                  </select>
-                </div>
+                
               </div>
           </div>
         </div>

@@ -37,10 +37,20 @@ $app->get('/', function () use ($conn, $baseServer){
 	$stat = file_get_contents('http://'.$baseServer.'/index?fungsi=get_status');
 	$status = json_decode($stat, true);
 
+	$chair = file_get_contents('http://10.10.100.206:9000/?fungsi=getOccupiedSeats');
+	$chairJSON = json_decode($result,true);
+	
+	if ($chairJSON['status'] == 'false') {
+		$chairRes = false;
+	} else {
+		$chairRes = count($chairJSON['data']) > 0 ? true : false;
+	}
+
 	$app->render('home.html', 
 		array('systemTemp' => $systemTemp,
 			'date' => date("g:i A"),
-			'status' => $status));
+			'status' => $status,
+			'chair' => $chairRes));
 });
 
 $app->get('/index', function () use ($conn, $baseServer){
