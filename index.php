@@ -10,11 +10,6 @@ if (!$conn) {
 	die("Connection failed: " . mysqli_connect_error());
 }
 
-$app->get('/', function () use ($conn){
-	$app = \Slim\Slim::getInstance();
-	$app->render('home.html');
-});
-
 require 'Status.php';
 require 'Temperature.php';
 require 'Time.php';
@@ -31,7 +26,26 @@ autoOn7am($baseServer);
 //cron auto off jam 9 malam
 autoOff9pm($baseServer);
 
-$app->get('/index', function () use ($conn, $baseServer, $checkTempActive){
+$app->get('/', function () use ($conn, $baseServer){
+	$app = \Slim\Slim::getInstance();
+	$systemTemp = getSystemTemperature($conn);
+
+	$stat = file_get_contents('http://'.$baseServer.'/index?fungsi=get_status');
+	$status = explode("-", $stat);
+	array_pop($status); //remove last
+
+	foreach ($status as $key => $value) {
+		$json = json_decode($value,true);
+		$status[$key] = $json;
+	}
+
+	$app->render('home.html', 
+		array('systemTemp' => $systemTemp,
+			'date' => date("g:i A"),
+			'status' => $status));
+});
+
+$app->get('/index', function () use ($conn, $baseServer){
 	$app = \Slim\Slim::getInstance();
 	$func = $app->request->get('fungsi');
 	$id = intval($app->request->get('id_device'));
@@ -44,6 +58,7 @@ $app->get('/index', function () use ($conn, $baseServer, $checkTempActive){
 				$num_rows = $result->num_rows;
 				for ($i=1; $i <= $num_rows; $i++) {
 					echo json_encode(getStatus($conn, $i), JSON_PRETTY_PRINT);
+					echo "-"; //separator
 				}
 				return;
 			}

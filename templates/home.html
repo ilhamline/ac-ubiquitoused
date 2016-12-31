@@ -22,7 +22,7 @@
               </div>
               <div class="large-2 columns">
                 <div class="navlink">
-                  6:28 pm
+                  <?=$date ?>
                 </div>
               </div>
               </3>
@@ -33,9 +33,11 @@
           <div class="row">
             <div class="large-12 columns topnav">
               <div class="searchbar">
-                <div class="suhu">28° C</div>
+                <div class="suhu"><?=$systemTemp['data']['system_temp'] ?>° C</div>
                 <div class="spec">
-                  AC status: active
+                  <?php foreach ($status as $stat): ?>
+                  AC-<?=$stat['data']['id'] ?> status: <?=$stat['data']['status'] ?><br>
+                  <?php endforeach; ?>
                 </div>
               </div>
             </div>
