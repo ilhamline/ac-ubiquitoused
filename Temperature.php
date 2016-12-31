@@ -83,35 +83,66 @@ function updateSystemTemperature($conn){
     $inResult = count($row) > 0 ? $row : "404";
     
     if ($inResult == '404') {
-      exit();
+      $output['status'] = 'false';
+      $output['data']['message'] = "Error get ac temperature: " . $sql . mysqli_error($conn);
+      return $output;
     }else {
       $sumTemp = $sumTemp + $inResult[0];
       $countTemp = $countTemp + 1;
     }
   }
 
+  if ($countTemp == 0) {
+    $output['status'] = 'false';
+    $output['data']['message'] = "ac mati semua gan";
+    return $output;
+  }
+
   $avgTemp = $sumTemp / $countTemp;
 
   //ambil system temperature
-  $sql = "SELECT temperature FROM system";
-  $result = $conn->query($sql);
-  $row = mysqli_fetch_row($result);
-  $result = count($row) > 0 ? $row[0] : "404";
+  $get_system_temperature = getSystemTemperature($conn);
+  $status = $get_system_temperature['status'] == "true" ? true : false;
   $systemTemp = 0;
 
-  if($result == '404') {
-    exit();
+  if($status) {
+    $systemTemp = $get_system_temperature['data']['system_temp'];
   } else {
-    $systemTemp = $result;
+    $output['status'] = 'false';
+    $output['data']['message'] = "Error get system temperature: " . $get_system_temperature['data']['message'];
+    return $output;
   }
 
   //compare suhu ac dan suhu ruangan
   if ($avgTemp > $systemTemp){
-    setSystemTemperature($conn, $systemTemp + 1);
-    setSystemTime($conn, date("Y-m-d H:i:s"));
+    $set_system_temperature = setSystemTemperature($conn, $systemTemp + 1);
+    $set_system_time = setSystemTime($conn, date("Y-m-d H:i:s"));
   } elseif ($avgTemp < $systemTemp) {
-    setSystemTemperature($conn, $systemTemp - 1);
-    setSystemTime($conn, date("Y-m-d H:i:s"));
+    $set_system_temperature = setSystemTemperature($conn, $systemTemp - 1);
+    $set_system_time = setSystemTime($conn, date("Y-m-d H:i:s"));
+  } else {
+    //kalo ga berubah
+    $output['status'] = 'true';
+    $output['data']['temperature'] = $systemTemp;
+    $output['data']['message'] = "temperature tidak berubah";
+    return $output;
   }
 
+  if ($set_system_temperature['status'] == 'false') {
+    $output['status'] = 'false';
+    $output['data']['message'] = "Error set system temperature: " . $set_system_temperature['data']['message'];
+    return $output;
+  }
+
+  if ($set_system_time['status'] == 'false') {
+    $output['status'] = 'false';
+    $output['data']['message'] = "Error set system time: " . $set_system_time['data']['message'];
+    return $output;
+  }
+
+  $output['status'] = 'true';
+  $output['data']['old_temperature'] = $systemTemp;
+  $output['data']['new_temperature'] = $set_system_temperature['data']['message'];
+  $output['data']['message'] = "berhasil update temperature";
+  return $output;
 }
