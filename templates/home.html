@@ -40,13 +40,13 @@
                   <?php endforeach; ?>
                 </div>
               </div>
-              <div class="large-3 columns saklar">
+              <div class="large-12 columns saklar">
                   Chair Status
                   <select>
-                    <?php if ($chair) ?>
-                      <option value="Occupied" disabled>Occupied</option>
-                    <?php else ?>
-                      <option value="Empty" disabled>Empty</option>
+                    <?php if ($chair): ?>
+                      <option>Occupied</option>
+                    <?php else: ?>
+                      <option> Empty</option>
                     <?php endif ?>
                   </select>
                 </div>

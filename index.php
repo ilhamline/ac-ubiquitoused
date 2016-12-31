@@ -38,9 +38,10 @@ $app->get('/', function () use ($conn, $baseServer){
 	$status = json_decode($stat, true);
 
 	$chair = file_get_contents('http://10.10.100.206:9000/?fungsi=getOccupiedSeats');
-	$chairJSON = json_decode($result,true);
+	$chairJSON = json_decode($chair,true);
+	$c = $chairJSON['status'] == 'true' ? true : false;
 	
-	if ($chairJSON['status'] == 'false') {
+	if (!$c) {
 		$chairRes = false;
 	} else {
 		$chairRes = count($chairJSON['data']) > 0 ? true : false;
@@ -199,14 +200,14 @@ $app->get('/index', function () use ($conn, $baseServer){
 });
 
 $app->get('/startupnp/', function () {
-	$cmd = '/home/net/.nvm/versions/node/v4.5.0/bin/node node_modules/node-ssdp/ubi/server.js';
+	$cmd = '/usr/bin/node node_modules/node-ssdp/ubi/server.js';
 	$outputfile = 'output.txt';
 	$pidfile = 'pid.txt';
 	exec(sprintf("%s > %s 2>&1 & echo $! >> %s", $cmd, $outputfile, $pidfile));
 });
 
 $app->get('/upnp/', function () {
-	$cmd = '/home/net/.nvm/versions/node/v4.5.0/bin/node node_modules/node-ssdp/ubi/client.js';
+	$cmd = '/usr/bin/node node_modules/node-ssdp/ubi/client.js';
 	exec($cmd, $output);
 	echo json_encode($output, JSON_PRETTY_PRINT);
 });

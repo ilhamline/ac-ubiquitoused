@@ -13,7 +13,9 @@
 		}
 
 		$hasil['status'] = 'true';
-		if(count($res['data'] == 0)){
+		$apa = $res['data'] > 0 ? true : false;
+
+		if(!$apa){
 			//standby
 			$out = file_get_contents('http://'.$baseServer.'/index?fungsi=set_status&arg1=standby');
 			$output = json_decode($out, true);
@@ -34,7 +36,7 @@
 
 			if($output[0]['status'] == 'false') {
 				$hasil['status'] = 'false';
-				$hasil['data']['message'] = "Gagal set on : " . $output['data']['message'];
+				$hasil['data']['message'] = "Gagal set on : " . $output[0]['data']['message'];
 				return $hasil;
 			}
 

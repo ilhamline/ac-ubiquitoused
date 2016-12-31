@@ -1,7 +1,7 @@
 <?php
 $servername = 'localhost';
 $username = 'root';
-$password = 'oasis';
-$dbname = 'ubi-slim';
-$baseServer = 'localhost/ac-ubiquitoused';
+$password = 'ubiq';
+$dbname = 'ubiq-new';
+$baseServer = 'localhost';
 $projectfolder = 'ac-ubiquitoused';
