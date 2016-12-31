@@ -31,13 +31,7 @@ $app->get('/', function () use ($conn, $baseServer){
 	$systemTemp = getSystemTemperature($conn);
 
 	$stat = file_get_contents('http://'.$baseServer.'/index?fungsi=get_status');
-	$status = explode("-", $stat);
-	array_pop($status); //remove last
-
-	foreach ($status as $key => $value) {
-		$json = json_decode($value,true);
-		$status[$key] = $json;
-	}
+	$status = json_decode($stat, true);
 
 	$app->render('home.html', 
 		array('systemTemp' => $systemTemp,
@@ -56,10 +50,11 @@ $app->get('/index', function () use ($conn, $baseServer){
 				$sql = "SELECT id FROM ac";
 				$result = $conn->query($sql);
 				$num_rows = $result->num_rows;
+				$output = [];
 				for ($i=1; $i <= $num_rows; $i++) {
-					echo json_encode(getStatus($conn, $i), JSON_PRETTY_PRINT);
-					echo "-"; //separator
+					array_push($output, getStatus($conn, $i));
 				}
+				echo json_encode($output, JSON_PRETTY_PRINT);
 				return;
 			}
 			echo json_encode(getStatus($conn, $id), JSON_PRETTY_PRINT);
@@ -70,9 +65,11 @@ $app->get('/index', function () use ($conn, $baseServer){
 				$sql = "SELECT id FROM ac";
 				$result = $conn->query($sql);
 				$num_rows = $result->num_rows;
+				$output = [];
 				for ($i=1; $i <= $num_rows; $i++) {
-					echo json_encode(setStatus($conn, $i, $status), JSON_PRETTY_PRINT);
+					array_push($output, setStatus($conn, $i, $status));
 				}
+				echo json_encode($output, JSON_PRETTY_PRINT);
 				return;
 			}
 			echo json_encode(setStatus($conn, $id, $status), JSON_PRETTY_PRINT);
@@ -83,9 +80,11 @@ $app->get('/index', function () use ($conn, $baseServer){
 				$sql = "SELECT id FROM ac";
 				$result = $conn->query($sql);
 				$num_rows = $result->num_rows;
+				$output = [];
 				for ($i=1; $i <= $num_rows; $i++) {
-					echo json_encode(setTemp($conn, $i, $temp ), JSON_PRETTY_PRINT);
+					array_push($output, setTemp($conn, $i, $temp ));
 				}
+				echo json_encode($output, JSON_PRETTY_PRINT);
 				return;
 			}
 			echo json_encode(setTemp($conn, $id, $temp ), JSON_PRETTY_PRINT);
@@ -95,9 +94,11 @@ $app->get('/index', function () use ($conn, $baseServer){
 				$sql = "SELECT id FROM ac";
 				$result = $conn->query($sql);
 				$num_rows = $result->num_rows;
+				$output = [];
 				for ($i=1; $i <= $num_rows; $i++) {
-					echo json_encode(getTemp($conn, $i), JSON_PRETTY_PRINT);
+					array_push($output, getTemp($conn, $i));
 				}
+				echo json_encode($output, JSON_PRETTY_PRINT);
 				return;
 			}
 			echo json_encode(getTemp($conn, $id), JSON_PRETTY_PRINT);
@@ -109,9 +110,11 @@ $app->get('/index', function () use ($conn, $baseServer){
 				$sql = "SELECT id FROM ac";
 				$result = $conn->query($sql);
 				$num_rows = $result->num_rows;
+				$output = [];
 				for ($i=1; $i <= $num_rows; $i++) {
-					echo json_encode(setTimer($conn, $i, $action, $time, $baseServer), JSON_PRETTY_PRINT);
+					array_push($output, setTimer($conn, $i, $action, $time, $baseServer));
 				}
+				echo json_encode($output, JSON_PRETTY_PRINT);
 				return;
 			}
 			echo json_encode(setTimer($conn, $id, $action, $time, $baseServer), JSON_PRETTY_PRINT);
@@ -121,9 +124,11 @@ $app->get('/index', function () use ($conn, $baseServer){
 				$sql = "SELECT id FROM ac";
 				$result = $conn->query($sql);
 				$num_rows = $result->num_rows;
+				$output = [];
 				for ($i=1; $i <= $num_rows; $i++) {
-					echo json_encode(resetTimer($conn, $i, $baseServer), JSON_PRETTY_PRINT);
+					array_push($output, resetTimer($conn, $i, $baseServer));
 				}
+				echo json_encode($output, JSON_PRETTY_PRINT);
 				return;
 			}
 			echo json_encode(resetTimer($conn, $id, $baseServer), JSON_PRETTY_PRINT);
@@ -133,9 +138,11 @@ $app->get('/index', function () use ($conn, $baseServer){
 				$sql = "SELECT id FROM ac";
 				$result = $conn->query($sql);
 				$num_rows = $result->num_rows;
+				$output = [];
 				for ($i=1; $i <= $num_rows; $i++) {
-					echo json_encode(getTimer($conn, $i), JSON_PRETTY_PRINT);
+					array_push($output, getTimer($conn, $i));
 				}
+				echo json_encode($output, JSON_PRETTY_PRINT);
 				return;
 			}
 			echo json_encode(getTimer($conn, $id), JSON_PRETTY_PRINT);
@@ -148,9 +155,11 @@ $app->get('/index', function () use ($conn, $baseServer){
 				$sql = "SELECT id FROM ac";
 				$result = $conn->query($sql);
 				$num_rows = $result->num_rows;
+				$output = [];
 				for ($i=1; $i <= $num_rows; $i++) {
-					echo json_encode(getRunningTime($conn, $i), JSON_PRETTY_PRINT);
+					array_push($output, getRunningTime($conn, $i));
 				}
+				echo json_encode($output, JSON_PRETTY_PRINT);
 				return;
 			}
 		  echo json_encode(getRunningTime($conn, $id), JSON_PRETTY_PRINT);
