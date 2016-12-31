@@ -4,6 +4,12 @@
 		$result = file_get_contents('http://10.10.100.206/?fungsi=getOccupiedSeats');
 		$res = json_decode($result,true);
 
+		if ($res['status'] == 'false') {
+			$hasil['status'] 'false';
+			$hasil['data']['message'] = "Error saat melakukan ping";
+			return $hasil;
+		}
+
 		$hasil['status'] = 'true';
 		if(count($res['data'] == 0)){
 			//standby
